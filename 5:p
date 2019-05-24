@@ -1,20 +1,8 @@
-import { extractFragmentReplacments } from "prisma-binding";
-import Query from "./Query.js";
-import Mutation from "./Mutation.js";
-import Subscription from "./Subscription.js";
-import User from "./User.js";
-import Post from "./Post.js";
-import Comment from "./Comment.js";
+require("babel-register");
+require("@babel/polyfill/noConflict");
 
-const resolvers = {
-  Query,
-  Mutation,
-  Subscription,
-  User,
-  Post,
-  Comment
+const server = require("../../src/server").default;
+
+module.exports = async () => {
+  global.httpServer = await server.start({ port: 4000 });
 };
-
-export const fragmentReplacments = extractFragmentReplacments(resolvers);
-
-export default resolvers;

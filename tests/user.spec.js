@@ -1,6 +1,7 @@
 import "@babel/polyfill";
 import "cross-fetch/polyfill";
 import ApolloBoost, { gql } from "apollo-boost";
+import { getFirstName, isValidPassword } from "../src/utils/user.js";
 import bcrypt from "bcryptjs";
 import prisma from "../src/prisma";
 
@@ -99,7 +100,29 @@ test("Should expose published posts", async () => {
   expect(response.data.posts[0].published).toBe(true);
 });
 
-//import { getFirstName, isValidPassword } from "../src/utils/user.js";
+test("Should not login with bad credentials", async () => {
+  const login = gql`
+    mutation {
+      login(data: { email: "jeff@example.com", password: "apidng898" }) {
+        token
+      }
+    }
+  `;
+  await expect(client.mutate({ mutation: login })).rejects.toThrow();
+});
+
+test("Should not signup user with invalid password ", async () => {
+  const createUser = gql`
+    mutation {
+      createUser(
+        data: { name: "Jon", email: "jon@test.com", password: "pass" }
+      ) {
+        token
+      }
+    }
+  `;
+  await expect(client.mutate({ mutation: createUser })).rejects.toThrow();
+});
 
 //test("Should return first name when given full name", () => {
 //const firstName = getFirstName("Jon Palacio");

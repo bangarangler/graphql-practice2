@@ -22,13 +22,13 @@ const postOne = {
 };
 
 const postTwo = {
-input: {
-title: "My draft Post",
-body: "",
-published: false
-},
-post: undefined
-}
+  input: {
+    title: "My draft Post",
+    body: "",
+    published: false
+  },
+  post: undefined
+};
 
 const seedDatabase = async () => {
   // delete test data

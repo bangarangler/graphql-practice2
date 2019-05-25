@@ -86,13 +86,19 @@ const createPost = gql`
 `;
 
 const deletePost = gql`
-mutation($id: ID!) {
-deletePost(
-id: $id
-){
-id
-}
-}
+  mutation($id: ID!) {
+    deletePost(id: $id) {
+      id
+    }
+  }
+`;
+
+const deleteComment = gql`
+  mutation($id: ID!) {
+    deleteComment(id: $id) {
+      id
+    }
+  }
 `;
 
 export {
@@ -103,6 +109,7 @@ export {
   getPosts,
   myPosts,
   updatePost,
-createPost,
-  deletePost
+  createPost,
+  deletePost,
+  deleteComment
 };

@@ -2,11 +2,16 @@ import "cross-fetch/polyfill";
 import seedDatabase, {
   userOne,
   commentOne,
-  commentTwo
+  commentTwo,
+  postOne
 } from "./utils/seedDatabase.js";
 import getClient from "./utils/getClient.js";
 import prisma from "../src/prisma.js";
-import { deleteComment } from "./utils/operations.js";
+import {
+  deleteComment,
+  subscribeToComments,
+  subscribeToPosts
+} from "./utils/operations.js";
 
 const client = getClient();
 
@@ -30,4 +35,29 @@ test("Should not delete other users comment", async () => {
   await expect(
     client.mutate({ mutation: deleteComment, variables })
   ).rejects.toThrow();
+});
+
+test("Should subscribe to comments for a post", async done => {
+  const variables = {
+    postId: postOne.post.id
+  };
+  client.subscribe({ query: subscribeToComments, variables }).subscribe({
+    next(response) {
+      // Assertions
+      expect(response.data.comment.mutation).toBe("DELETED");
+      done();
+    }
+  });
+  // change a comment
+  await prisma.mutation.deleteComment({ where: { id: commentOne.comment.id } });
+});
+
+test("Should subscribe to changes for published posts", async done => {
+  client.subscribe({ query: subscribeToPosts }).subscribe({
+    next(response) {
+      expect(response.data.post.mutation).toBe("DELETED");
+      done();
+    }
+  });
+  await prisma.mutation.deletePost({ where: { id: postOne.post.id } });
 });
